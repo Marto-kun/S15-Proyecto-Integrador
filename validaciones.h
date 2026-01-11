@@ -152,3 +152,24 @@ int esVacia(char *str)
     }
     return 1;
 }
+
+/**
+ * @brief Funcion para validar la existencia de un fichero
+ *
+ * @param archivo Nombre del archivo a comprobar
+ * @return int 0 si no existe, 1 si existe
+ */
+int VerificarFichero(const char *archivo)
+{
+    FILE *file;
+    file = fopen(archivo, "r");
+    if (file == NULL)
+    {
+        fclose(file);
+        return 0; // 0 si no existe el archivo
+    }
+    else
+    {
+        return 1; // 1 si el archivo existe
+    }
+}
