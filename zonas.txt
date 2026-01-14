@@ -1,0 +1,1 @@
+Zona                 CO2        SO2        NO2        PM2.5      Temp       Viento     Hum       
