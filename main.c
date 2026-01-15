@@ -1,3 +1,14 @@
+/**
+ * @file main.c
+ * @author Martin Vozmediano, Helen Benalcazar
+ * @brief Sistema Integral de Gestion y Prediccion de Contaminacion del Aire en Zonas Urbanas
+ * @version 1.0
+ * @date 2026-01-15
+ * * @details Este programa permite el monitoreo de 5 zonas urbanas, calcula
+ * predicciones basadas en factores climáticos y genera reportes ejecutivos
+ * persistentes en archivos .txt
+ */
+
 #include <stdio.h>
 #include "funciones.h"
 
@@ -84,7 +95,14 @@ int main(int argc, char *argv[])
             CalcularPromediosHist(count);
             break;
         case 5:
-            
+            if (VerificarFichero("zonas.txt") == 1 && VerificarFichero("historicos.txt") == 1)
+            {
+                GenerarReporte(count);
+            }
+            else
+            {
+                printf("\nArchivos necesarios insuficientes, revise la existencia de: zonas.txt e historicos.txt ");
+            }
             break;
         case 6:
             printf("\nMuchas gracias por usar nuestro programa. Saliendo...\n");

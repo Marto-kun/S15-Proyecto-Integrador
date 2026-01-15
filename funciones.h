@@ -661,10 +661,9 @@ void CalcularPrediccion(int total)
     fclose(archivo);
 }
 
-
 /**
  * @brief Funcion para calcular los promedios historicos de cada zona
- * 
+ *
  * @param total Cantidad de zonas registradas
  */
 void CalcularPromediosHist(int total)
@@ -735,8 +734,14 @@ void CalcularPromediosHist(int total)
     fclose(archivo);
 }
 
-
-void GenerarReporte(int total){
+/**
+ * @brief Función para generar el reporte completo de cada zona 
+ *        sobre su contaminacion ambiental
+ * 
+ * @param total Cantidad de zonas registradas
+ */
+void GenerarReporte(int total)
+{
     if (total < NUM_ZONAS)
     {
         printf("\nNo hay suficientes datos ingresados. Por favor, use la opcion 1 primero.\n");
@@ -747,9 +752,85 @@ void GenerarReporte(int total){
     FILE *histo = fopen("historicos.txt", "r");
     FILE *repo = fopen("reporteFinal.txt", "w");
 
-    if (zonas == NULL || histo == NULL || repo == NULL) {
+    if (zonas == NULL || histo == NULL || repo == NULL)
+    {
         printf("\nError: Faltan archivos base para generar el reporte.\n");
         return;
     }
 
+    char Lzonas[256], Lhisto[1024], nombre[50];
+    float co2, so2, no2, pm25, temp, viento, hum, valor_h, suma_h;
+    int contador = 0;
+
+    // Encabezado del reporte
+    printf("\n================================================================");
+    printf("\n          Sistema Integral de Gestion y \nPrediccion de Contaminacion del Aire en Zonas Urbanas");
+    printf("\n================================================================");
+
+    // Saltarse linea de encabezados en los archivos de zonas y de historicos
+    fgets(Lzonas, sizeof(Lzonas), zonas);
+    fgets(Lhisto, sizeof(Lhisto), histo);
+
+    // Proceso de cada zona mediante bucle while
+    while (fscanf(zonas, "%s %f %f %f %f %f %f %f",
+                  nombre, &co2, &so2, &no2, &pm25, &temp, &viento, &hum) == 8)
+    {
+        // Calculo de promedio historico para zona actual
+        char nombreH[50];
+        suma_h = 0;
+        fscanf(histo, "%s", nombreH);
+        for (int i = 0; i < HISTORICOS; i++)
+        {
+            fscanf(histo, "%f", &valor_h);
+            suma_h += valor_h;
+        }
+        float promedioMes = suma_h / HISTORICOS;
+
+        // Prediccion para zona actual (24h)
+        float fViento = viento * 0.05;
+        float fHum = hum * 0.02;
+
+        float predCO2 = co2 - fViento + (fHum * 0.1);
+        float predSO2 = so2 - (fViento * 0.8); // Se disipa mas facilmente
+        float predNO2 = no2 - (fViento * 0.6);
+        float predPM25 = pm25 - (fViento * 0.1) + fHum;
+
+        // Escritura de resultados en archivo persistente
+        {
+            fprintf(repo, "ZONA: %-20s\n", nombre);
+            fprintf(repo, "--------------------------------------------------------------\n");
+            fprintf(repo, "ANÁLISIS HISTÓRICO:\n");
+            fprintf(repo, "  > Promedio Mensual (PM2.5): %.2f ug/m3\n", promedioMes);
+            fprintf(repo, "  > Estado del Mes: %s\n", (promedioMes > 15.0) ? "CRÍTICO" : "DENTRO DEL LÍMITE");
+
+            fprintf(repo, "\nPREDICCIONES PRÓXIMAS 24 HORAS:\n");
+            fprintf(repo, "  > CO2:  %7.2f | SO2:  %7.2f\n", predCO2, predSO2);
+            fprintf(repo, "  > NO2:  %7.2f | PM2.5: %7.2f\n", predNO2, predPM25);
+        }
+
+        // Alerta y recomendaciones
+        {
+            fprintf(repo, "\nCONCLUSIÓN:\n");
+            if (predPM25 > 15.0 || predCO2 > 400.0)
+            {
+                fprintf(repo, "  ESTADO: [ALERTA PREVENTIVA]\n");
+                fprintf(repo, "  ACCIÓN: Notificar a Salud Pública y restringir tráfico.\n");
+            }
+            else
+            {
+                fprintf(repo, "  ESTADO: [CALIDAD ÓPTIMA]\n");
+                fprintf(repo, "  ACCIÓN: No se requieren medidas restrictivas.\n");
+            }
+            fprintf(repo, "==============================================================\n\n");
+
+            contador++;
+        }
+    }
+
+    fclose(zonas);
+    fclose(histo);
+    fclose(repo);
+
+    printf("\n[PROCESO COMPLETADO]: Se han analizado %d zonas.", contador);
+    printf("\nEl archivo 'reporte_final.txt' está listo para su revisión.\n");
 }
