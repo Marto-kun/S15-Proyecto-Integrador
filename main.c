@@ -78,11 +78,13 @@ int main(int argc, char *argv[])
             MonitorearLimites(count);
             break;
         case 3:
-            CalcularPrediccion();
+            CalcularPrediccion(count);
             break;
         case 4:
+            CalcularPromediosHist(count);
             break;
         case 5:
+            
             break;
         case 6:
             printf("\nMuchas gracias por usar nuestro programa. Saliendo...\n");

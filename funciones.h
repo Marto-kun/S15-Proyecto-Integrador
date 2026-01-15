@@ -564,12 +564,23 @@ void MonitorearLimites(int total)
     fclose(archivo);
 }
 
-void CalcularPrediccion()
+/**
+ * @brief Función para calcular y mostrar las predicciones para las proximas 24h
+ *
+ * @param total Cantidad de zonas registradas
+ */
+void CalcularPrediccion(int total)
 {
+    if (total < NUM_ZONAS)
+    {
+        printf("\nNo hay suficientes datos ingresados. Por favor, use la opcion 1 primero.\n");
+        return;
+    }
+
     FILE *archivo = fopen("zonas.txt", "r");
     if (archivo == NULL)
     {
-        printf("\n[!] Error: No se pudo abrir el archivo de datos.\n");
+        printf("\nError: No se pudo abrir el archivo de datos.\n");
         return;
     }
 
@@ -648,4 +659,97 @@ void CalcularPrediccion()
     printf("\n------------------------------------------------------------------------------------\n");
 
     fclose(archivo);
+}
+
+
+/**
+ * @brief Funcion para calcular los promedios historicos de cada zona
+ * 
+ * @param total Cantidad de zonas registradas
+ */
+void CalcularPromediosHist(int total)
+{
+    if (total < NUM_ZONAS)
+    {
+        printf("\nNo hay suficientes datos ingresados. Por favor, use la opcion 1 primero.\n");
+        return;
+    }
+
+    FILE *archivo = fopen("historicos.txt", "r");
+    if (archivo == NULL)
+    {
+        printf("\nError: No se encontro el archivo 'historicos.txt'.");
+        return;
+    }
+
+    char linea[1024]; // Linea larga para los 30 datos
+    char nombreZona[50];
+    float suma, valor, promedio;
+    int contadorZonas = 0;
+
+    printf("\n================================================================");
+    printf("\n         ANALISIS DE PROMEDIOS HISTORICOS (30 DIAS)");
+    printf("\n================================================================");
+    printf("\n%-20s %-15s %-15s", "Zona", "Promedio Mes", "Estado Mensual");
+    printf("\n----------------------------------------------------------------");
+
+    // Saltar el encabezado del archivo historicos.txt
+    fgets(linea, sizeof(linea), archivo);
+
+    // Leer cada zona y sus 30 datos
+    while (fscanf(archivo, "%s", nombreZona) == 1)
+    {
+        suma = 0;
+
+        // Bucle para leer los 30 valores flotantes de la fila
+        for (int i = 0; i < HISTORICOS; i++)
+        {
+            if (fscanf(archivo, "%f", &valor) == 1)
+            {
+                suma += valor;
+            }
+        }
+
+        promedio = suma / HISTORICOS;
+        contadorZonas++;
+
+        printf("\n%-20s %-15.2f ", nombreZona, promedio);
+
+        // Comparativa con limite de la OMS para el mes
+        if (promedio > 15.0)
+        {
+            printf("[CRITICO]");
+        }
+        else
+        {
+            printf("[ESTABLE]");
+        }
+    }
+
+    if (contadorZonas == 0)
+    {
+        printf("\nNo se encontraron datos historicos procesables.");
+    }
+
+    printf("\n----------------------------------------------------------------\n");
+    fclose(archivo);
+}
+
+
+void GenerarReporte(int total){
+    if (total < NUM_ZONAS)
+    {
+        printf("\nNo hay suficientes datos ingresados. Por favor, use la opcion 1 primero.\n");
+        return;
+    }
+
+    FILE *zonas = fopen("zonas.txt", "r");
+    FILE *histo = fopen("historicos.txt", "r");
+    FILE *repo = fopen("reporteFinal.txt", "w");
+
+    if (zonas == NULL || histo == NULL || repo == NULL) {
+        printf("\nError: Faltan archivos base para generar el reporte.\n");
+        return;
+    }
+
 }
