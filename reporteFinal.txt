@@ -1,0 +1,75 @@
+ZONA: CentroHistorico     
+--------------------------------------------------------------
+ANÁLISIS HISTÓRICO:
+  > Promedio Mensual (PM2.5): 12.57 ug/m3
+  > Estado del Mes: DENTRO DEL LÍMITE
+
+PREDICCIONES PRÓXIMAS 24 HORAS:
+  > CO2:   249.82 | SO2:     8.48
+  > NO2:    25.12 | PM2.5:    8.20
+
+CONCLUSIÓN:
+  ESTADO: [CALIDAD ÓPTIMA]
+  ACCIÓN: No se requieren medidas restrictivas.
+==============================================================
+
+ZONA: Calderon            
+--------------------------------------------------------------
+ANÁLISIS HISTÓRICO:
+  > Promedio Mensual (PM2.5): 5.96 ug/m3
+  > Estado del Mes: DENTRO DEL LÍMITE
+
+PREDICCIONES PRÓXIMAS 24 HORAS:
+  > CO2:   147.99 | SO2:     5.56
+  > NO2:    11.67 | PM2.5:    2.79
+
+CONCLUSIÓN:
+  ESTADO: [CALIDAD ÓPTIMA]
+  ACCIÓN: No se requieren medidas restrictivas.
+==============================================================
+
+ZONA: ValleDeLosChillos   
+--------------------------------------------------------------
+ANÁLISIS HISTÓRICO:
+  > Promedio Mensual (PM2.5): 8.64 ug/m3
+  > Estado del Mes: DENTRO DEL LÍMITE
+
+PREDICCIONES PRÓXIMAS 24 HORAS:
+  > CO2:   199.45 | SO2:     8.94
+  > NO2:    23.01 | PM2.5:    8.27
+
+CONCLUSIÓN:
+  ESTADO: [CALIDAD ÓPTIMA]
+  ACCIÓN: No se requieren medidas restrictivas.
+==============================================================
+
+ZONA: LaBota              
+--------------------------------------------------------------
+ANÁLISIS HISTÓRICO:
+  > Promedio Mensual (PM2.5): 15.95 ug/m3
+  > Estado del Mes: CRÍTICO
+
+PREDICCIONES PRÓXIMAS 24 HORAS:
+  > CO2:   312.70 | SO2:    13.25
+  > NO2:    14.86 | PM2.5:    8.74
+
+CONCLUSIÓN:
+  ESTADO: [CALIDAD ÓPTIMA]
+  ACCIÓN: No se requieren medidas restrictivas.
+==============================================================
+
+ZONA: SanBartolo          
+--------------------------------------------------------------
+ANÁLISIS HISTÓRICO:
+  > Promedio Mensual (PM2.5): 10.64 ug/m3
+  > Estado del Mes: DENTRO DEL LÍMITE
+
+PREDICCIONES PRÓXIMAS 24 HORAS:
+  > CO2:   363.61 | SO2:     8.59
+  > NO2:    14.64 | PM2.5:    6.43
+
+CONCLUSIÓN:
+  ESTADO: [CALIDAD ÓPTIMA]
+  ACCIÓN: No se requieren medidas restrictivas.
+==============================================================
+

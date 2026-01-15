@@ -832,5 +832,5 @@ void GenerarReporte(int total)
     fclose(repo);
 
     printf("\n[PROCESO COMPLETADO]: Se han analizado %d zonas.", contador);
-    printf("\nEl archivo 'reporte_final.txt' está listo para su revisión.\n");
+    printf("\nEl archivo 'reporte_final.txt' esta listo para su revision.\n");
 }
