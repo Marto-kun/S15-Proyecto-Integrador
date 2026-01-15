@@ -6,12 +6,12 @@ int main(int argc, char *argv[])
 
     Zona zonas[NUM_ZONAS];
     char entrada[50];
-    int opc, count;
+    int opc, count = ContarZonasEnArchivo();
     FILE *archivo = fopen("zonas.txt", "r");
 
-    printf("\n----------------------------------------------------------------");
+    printf("\n================================================================");
     printf("\n          Sistema Integral de Gestion y \nPrediccion de Contaminacion del Aire en Zonas Urbanas");
-    printf("\n----------------------------------------------------------------\n");
+    printf("\n================================================================");
 
     if (VerificarFichero("zonas.txt") == 1)
     {
@@ -40,10 +40,10 @@ int main(int argc, char *argv[])
         do
         {
             printf("\n------ MENU PRINCIPAL ------");
-            printf("\n1) Ingresar nueva zona");
-            printf("\n2) Monitoreo de límites actuales");
+            printf("\n1) Ingresar nuevas zonas");
+            printf("\n2) Monitoreo de limites actuales (OMS)");
             printf("\n3) Predicciones de contaminacion (prox. 24 horas)");
-            printf("\n4) Reporte de promedios históricos (ultimos 30 dias)");
+            printf("\n4) Reporte de promedios historicos (ultimos 30 dias)");
             printf("\n5) Generar reporte final");
             printf("\n6) Salir");
             printf("\n>>>");
@@ -69,21 +69,23 @@ int main(int argc, char *argv[])
 
         } while (opcValida == 0);
 
-
         switch (opc)
         {
         case 1:
-            IngresarDatosZonas(zonas, count);
+            IngresarDatosZonas(zonas, &count);
             break;
         case 2:
+            MonitorearLimites(count);
             break;
         case 3:
+            CalcularPrediccion();
             break;
         case 4:
             break;
         case 5:
             break;
         case 6:
+            printf("\nMuchas gracias por usar nuestro programa. Saliendo...\n");
             break;
         default:
             printf("\nOpcion invalida, intentelo de nuevo...");

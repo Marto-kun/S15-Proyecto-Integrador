@@ -1,1 +1,6 @@
 Zona                 CO2        SO2        NO2        PM2.5      Temp       Viento     Hum       
+CentroHistorico      250.78     9.30       25.74      7.60       25.0       20.6       35.0      
+Calderon             150.00     7.20       12.90      2.60       12.0       41.0       20.0      
+ValleDeLosChillos    200.65     10.00      23.80      7.20       18.0       26.4       60.0      
+LaBota               315.20     15.30      16.40      8.40       11.0       51.2       30.0      
+SanBartolo           365.34     10.00      15.70      6.30       18.0       35.3       15.2      

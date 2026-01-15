@@ -5,7 +5,11 @@
 
 #define NUM_ZONAS 5
 #define HISTORICOS 30
+
+// Limites OMS
 #define LIMITE_CO2 400.0
+#define LIMITE_SO2 20.0
+#define LIMITE_NO2 40.0
 #define LIMITE_PM25 15.0
 
 typedef struct
@@ -188,6 +192,36 @@ int VerificarFichero(const char *archivo)
 }
 
 /**
+ * @brief Funcion para contar cuantas zonas existen en el archivo
+ *
+ * @return int Numero de lineas con informacion en el archivo
+ */
+int ContarZonasEnArchivo()
+{
+    FILE *archivo = fopen("zonas.txt", "r");
+    if (archivo == NULL)
+        return 0;
+
+    char linea[200];
+    int contador = 0;
+
+    // Saltamos la primera linea (el encabezado)
+    fgets(linea, sizeof(linea), archivo);
+
+    // Contamos cuantas lineas con datos hay
+    while (fgets(linea, sizeof(linea), archivo) != NULL)
+    {
+        if (strlen(linea) > 5) // Evita contar lineas vacias
+        {
+            contador++;
+        }
+    }
+
+    fclose(archivo);
+    return contador;
+}
+
+/**
  * @brief Funcion para ingresar datos actuales de una nueva zona
  *        e imprimir los valores dentro de un fichero
  *
@@ -196,6 +230,13 @@ int VerificarFichero(const char *archivo)
  */
 void IngresarDatosZonas(Zona zonas[], int *totalZonas)
 {
+    if (*totalZonas >= 5)
+    {
+        printf("\nEl archivo ya contiene 5 zonas. Intente con el resto de opciones");
+        printf("\nRegresando al Menu Principal...");
+        return;
+    }
+
     char entrada[50];
     int n = 5;
 
@@ -435,4 +476,176 @@ void IngresarDatosZonas(Zona zonas[], int *totalZonas)
         }
     }
     *totalZonas = n;
+}
+
+/**
+ * @brief Funcion para comparar la contaminacion actual con los
+ *        limites de la OMS
+ *
+ * @param total Cantidad de zonas registradas
+ */
+void MonitorearLimites(int total)
+{
+    if (total < NUM_ZONAS)
+    {
+        printf("\nNo hay suficientes datos ingresados. Por favor, use la opcion 1 primero.\n");
+        return;
+    }
+
+    printf("\nLimites OMS: \nCO2: %.2f, S02: %.2f, NO2: %.2f, PM2.5: %.2f",
+           LIMITE_CO2, LIMITE_SO2, LIMITE_NO2, LIMITE_PM25);
+
+    FILE *archivo = fopen("zonas.txt", "r");
+    if (archivo == NULL)
+    {
+        printf("\nError: No se pudo abrir el archivo de datos.\n");
+        return;
+    }
+
+    char linea[256];
+    char nombre[50];
+    float co2, so2, no2, pm25, temp, viento, hum;
+    int contador = 0;
+
+    printf("\n================================================================");
+    printf("\n           ESTADO ACTUAL Y MONITOREO DE LIMITES");
+    printf("\n================================================================");
+    printf("\n%-15s %-10s %-10s %-10s %-10s", "Zona", "CO2", "SO2", "NO2", "PM2.5");
+    printf("\n----------------------------------------------------------------");
+
+    // 1. Saltar la primera línea
+    if (fgets(linea, sizeof(linea), archivo) == NULL)
+    {
+        printf("\nEl archivo esta vacio.");
+        fclose(archivo);
+        return;
+    }
+
+    // 2. Leer los datos fila por fila
+    while (fscanf(archivo, "%s %f %f %f %f %f %f %f",
+                  nombre, &co2, &so2, &no2, &pm25, &temp, &viento, &hum) == 8)
+    {
+
+        contador++;
+        printf("\n%-15s %-10.2f %-10.2f %-10.2f %-10.2f",
+               nombre, co2, so2, no2, pm25);
+
+        int riesgo = 0;
+        printf("\n  >> ALERTAS: ");
+
+        if (co2 > LIMITE_CO2)
+        {
+            printf("[EXCESO CO2] ");
+            riesgo = 1;
+        }
+        if (pm25 > LIMITE_PM25)
+        {
+            printf("[EXCESO PM2.5] ");
+            riesgo = 1;
+        }
+
+        if (riesgo == 0)
+        {
+            printf("Niveles dentro de lo normal.");
+        }
+        else
+        {
+            printf("\n  >> RECOMENDACION: Se sugiere limitar actividades al aire libre.");
+        }
+        printf("\n----------------------------------------------------------------");
+    }
+
+    // Validación de la consigna: comprobar si hay al menos 5
+    if (contador < 5)
+    {
+        printf("\nSolo se encontraron %i zonas. Se requieren 5 para el reporte completo.", contador);
+    }
+
+    fclose(archivo);
+}
+
+void CalcularPrediccion()
+{
+    FILE *archivo = fopen("zonas.txt", "r");
+    if (archivo == NULL)
+    {
+        printf("\n[!] Error: No se pudo abrir el archivo de datos.\n");
+        return;
+    }
+
+    char linea[250], nombre[50];
+    float co2, so2, no2, pm25, temp, viento, hum;
+    int contador = 0;
+
+    printf("\n====================================================================================");
+    printf("\n               PREDICCION DE CONTAMINACION (PROXIMAS 24 HORAS)");
+    printf("\n====================================================================================");
+    // Ajuste de columnas para incluir SO2 y NO2
+    printf("\n%-18s %-10s %-10s %-10s %-10s %-10s", "Zona", "CO2 Pred.", "SO2 Pred.", "NO2 Pred.", "PM2.5 Pred.", "Tendencia");
+    printf("\n------------------------------------------------------------------------------------");
+
+    // Saltar encabezado
+    fgets(linea, sizeof(linea), archivo);
+
+    // Leer segun el formato de tu archivo [cite: 1, 2, 3, 4]
+    while (fscanf(archivo, "%s %f %f %f %f %f %f %f",
+                  nombre, &co2, &so2, &no2, &pm25, &temp, &viento, &hum) == 8)
+    {
+
+        contador++;
+
+        // FACTORES DE PREDICCION
+        // El viento reduce la concentracion (dispersión)
+        // La humedad afecta principalmente a las partículas (PM2.5)
+        float factorViento = viento * 0.05;
+        float factorHum = hum * 0.02;
+
+        // Calculo de Predicciones
+        float predCO2 = co2 - factorViento + (factorHum * 0.1);
+        float predSO2 = so2 - (factorViento * 0.8); // El SO2 se dispersa facil con viento
+        float predNO2 = no2 - (factorViento * 0.6);
+        float predPM25 = pm25 - (factorViento * 0.1) + factorHum;
+
+        // Validacion: No pueden existir valores negativos
+        if (predCO2 < 0)
+        {
+            predCO2 = 0;
+        }
+
+        if (predSO2 < 0)
+        {
+            predSO2 = 0;
+        }
+
+        if (predNO2 < 0)
+        {
+            predNO2 = 0;
+        }
+
+        if (predPM25 < 0)
+        {
+            predPM25 = 0;
+        }
+
+        printf("\n%-18s %-10.2f %-10.2f %-10.2f %-10.2f ",
+               nombre, predCO2, predSO2, predNO2, predPM25);
+
+        // Lógica de Tendencia basada en PM2.5 (el contaminante más crítico)
+        if (predPM25 > pm25)
+        {
+            printf("[SUBE]");
+        }
+        else
+        {
+            printf("[BAJA]");
+        }
+    }
+
+    if (contador < 5)
+    {
+        printf("\nSolo se encontraron %i zonas. Se requieren 5 para el reporte completo.", contador);
+    }
+    printf("\n------------------------------------------------------------------------------------\n");
+
+    fclose(archivo);
 }
