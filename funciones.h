@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #define NUM_ZONAS 5
 #define HISTORICOS 30
@@ -479,6 +480,128 @@ void IngresarDatosZonas(Zona zonas[], int *totalZonas)
 }
 
 /**
+ * @brief Funcion para editar una zona del archivo zonas.txt
+ *
+ * @param zonas Arreglo para guardar datos a imprimir
+ * @param total Cantidad de zonas registradas
+ */
+void EditarZona(Zona zonas[], int total)
+{
+    if (total < NUM_ZONAS)
+    {
+        printf("\nNo hay suficientes zonas ingresadas. Por favor, use la opcion 1 primero.\n");
+        return;
+    }
+
+    FILE *archivo = fopen("zonas.txt", "r");
+    if (archivo == NULL)
+    {
+        printf("\nError: No se pudo abrir el archivo de datos.\n");
+        return;
+    }
+
+    printf("\nIngrese la zona que desea editar: ");
+    printf("\n%-3s %-20s %-10s %-10s %-10s %-10s %-10s %-10s %-10s\n", "No",
+           "Zona", "CO2", "SO2", "NO2", "PM2.5", "Temp", "Viento", "Hum");
+
+    char buffer[256], entrada[50];
+    int linea = 0;
+
+    fgets(buffer, sizeof(buffer), archivo); // Saltar encabezado
+    while (fscanf(archivo, "%s %f %f %f %f %f %f %f",
+                  zonas[linea].nombre, &zonas[linea].co2, &zonas[linea].so2,
+                  &zonas[linea].no2, &zonas[linea].pm25, &zonas[linea].temperatura,
+                  &zonas[linea].viento, &zonas[linea].humedad) == 8)
+    {
+        printf("%-3i %-20s %-10.2f %-10.2f %-10.2f %-10.2f %-10.2f %-10.2f %-10.2f\n",
+               linea + 1, zonas[linea].nombre, zonas[linea].co2, zonas[linea].so2,
+               zonas[linea].no2, zonas[linea].pm25, zonas[linea].temperatura,
+               zonas[linea].viento, zonas[linea].humedad);
+        linea++;
+    }
+    fclose(archivo);
+
+    // 2. Seleccion del numero de zona con validacion
+    int selValida = 0, nEscogido;
+    do
+    {
+        printf("\nSeleccione el numero de zona a editar (1-%i): ", total);
+        fgets(entrada, 25, stdin);
+        entrada[strcspn(entrada, "\n")] = '\0';
+
+        if (VerificacionDigitos(entrada))
+        {
+            nEscogido = atoi(entrada);
+            if (nEscogido >= 1 && nEscogido <= total)
+                selValida = 1;
+        }
+        if (!selValida)
+            printf("Entrada invalida. Ingrese un numero de la lista.");
+    } while (!selValida);
+
+    int idx = nEscogido - 1;
+    printf("\n--- Editando Zona #%i: %s ---\n", nEscogido, zonas[idx].nombre);
+
+    // Ingreso de nombre
+    int nombreValido = 0;
+    do
+    {
+        printf("Ingrese nuevo nombre de la zona: ");
+        fgets(entrada, 50, stdin);
+        entrada[strcspn(entrada, "\n")] = '\0';
+        if (VerificacionChar(entrada))
+        {
+            strcpy(zonas[idx].nombre, entrada);
+            nombreValido = 1;
+        }
+        else
+        {
+            printf("Solo se permiten letras. Intente de nuevo.\n");
+        }
+    } while (!nombreValido);
+
+    // 4. Edicion validada de valores numericos (Ejemplo CO2)
+    // Se usa una macro o funcion local para repetir este proceso en cada gas
+    float *campos[] = {&zonas[idx].co2, &zonas[idx].so2, &zonas[idx].no2, &zonas[idx].pm25,
+                       &zonas[idx].temperatura, &zonas[idx].viento, &zonas[idx].humedad};
+    const char *nombresCampos[] = {"CO2", "SO2", "NO2", "PM2.5", "Temperatura", "Viento", "Humedad"};
+
+    for (int i = 0; i < 7; i++)
+    {
+        int valValido = 0;
+        do
+        {
+            printf("Ingrese nuevo valor para %s: ", nombresCampos[i]);
+            fgets(entrada, 25, stdin);
+            entrada[strcspn(entrada, "\n")] = '\0';
+            // Nota: Si tus funciones aceptan puntos, usa VerificacionDigitosFloat
+            if (VerificacionFloat(entrada))
+            {
+                *campos[i] = atof(entrada);
+                valValido = 1;
+            }
+            else
+            {
+                printf("Entrada invalida. Use solo numeros.\n");
+            }
+        } while (!valValido);
+    }
+
+    // Imprimir resultados de edicion (sobreesctritura)
+    archivo = fopen("zonas.txt", "w");
+    fprintf(archivo, "%-20s %-10s %-10s %-10s %-10s %-10s %-10s %-10s\n",
+            "Zona", "CO2", "SO2", "NO2", "PM2.5", "Temp", "Viento", "Hum");
+    for (int i = 0; i < total; i++)
+    {
+        fprintf(archivo, "%-20s %-10.2f %-10.2f %-10.2f %-10.2f %-10.1f %-10.1f %-10.1f\n",
+                zonas[i].nombre, zonas[i].co2, zonas[i].so2, zonas[i].no2,
+                zonas[i].pm25, zonas[i].temperatura, zonas[i].viento, zonas[i].humedad);
+    }
+    fclose(archivo);
+    printf("\n[OK] Zona actualizada exitosamente en el archivo.\n");
+}
+
+/**
  * @brief Funcion para comparar la contaminacion actual con los
  *        limites de la OMS
  *
@@ -608,14 +731,16 @@ void CalcularPrediccion(int total)
         // FACTORES DE PREDICCION
         // El viento reduce la concentracion (dispersión)
         // La humedad afecta principalmente a las partículas (PM2.5)
+        // Factor de prediccion aleatorio, uso de funcion rand()
+        srand(time(NULL));
         float factorViento = viento * 0.05;
         float factorHum = hum * 0.02;
 
         // Calculo de Predicciones
-        float predCO2 = co2 - factorViento + (factorHum * 0.1);
-        float predSO2 = so2 - (factorViento * 0.8); // El SO2 se dispersa facil con viento
-        float predNO2 = no2 - (factorViento * 0.6);
-        float predPM25 = pm25 - (factorViento * 0.1) + factorHum;
+        float predCO2 = co2 - factorViento + (factorHum * ((double)rand() / RAND_MAX));
+        float predSO2 = so2 - (factorViento * ((double)rand() / RAND_MAX)); // El SO2 se dispersa facil con viento
+        float predNO2 = no2 - (factorViento * ((double)rand() / RAND_MAX));
+        float predPM25 = pm25 - (factorViento * ((double)rand() / RAND_MAX)) + factorHum;
 
         // Validacion: No pueden existir valores negativos
         if (predCO2 < 0)
@@ -735,9 +860,9 @@ void CalcularPromediosHist(int total)
 }
 
 /**
- * @brief Función para generar el reporte completo de cada zona 
+ * @brief Función para generar el reporte completo de cada zona
  *        sobre su contaminacion ambiental
- * 
+ *
  * @param total Cantidad de zonas registradas
  */
 void GenerarReporte(int total)
@@ -787,13 +912,14 @@ void GenerarReporte(int total)
         float promedioMes = suma_h / HISTORICOS;
 
         // Prediccion para zona actual (24h)
+        srand(time(NULL));
         float fViento = viento * 0.05;
         float fHum = hum * 0.02;
 
-        float predCO2 = co2 - fViento + (fHum * 0.1);
-        float predSO2 = so2 - (fViento * 0.8); // Se disipa mas facilmente
-        float predNO2 = no2 - (fViento * 0.6);
-        float predPM25 = pm25 - (fViento * 0.1) + fHum;
+        float predCO2 = co2 - fViento + (fHum * ((double)rand() / RAND_MAX));
+        float predSO2 = so2 - (fViento * ((double)rand() / RAND_MAX)); // Se disipa mas facilmente
+        float predNO2 = no2 - (fViento * ((double)rand() / RAND_MAX));
+        float predPM25 = pm25 - (fViento * ((double)rand() / RAND_MAX)) + fHum;
 
         // Escritura de resultados en archivo persistente
         {

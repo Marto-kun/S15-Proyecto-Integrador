@@ -52,11 +52,12 @@ int main(int argc, char *argv[])
         {
             printf("\n------ MENU PRINCIPAL ------");
             printf("\n1) Ingresar nuevas zonas");
-            printf("\n2) Monitoreo de limites actuales (OMS)");
-            printf("\n3) Predicciones de contaminacion (prox. 24 horas)");
-            printf("\n4) Reporte de promedios historicos (ultimos 30 dias)");
-            printf("\n5) Generar reporte final");
-            printf("\n6) Salir");
+            printf("\n2) Editar zona");
+            printf("\n3) Monitoreo de limites actuales (OMS)");
+            printf("\n4) Predicciones de contaminacion (prox. 24 horas)");
+            printf("\n5) Reporte de promedios historicos (ultimos 30 dias)");
+            printf("\n6) Generar reporte final");
+            printf("\n7) Salir");
             printf("\n>>>");
 
             if (fgets(entrada, 25, stdin) == NULL)
@@ -86,15 +87,18 @@ int main(int argc, char *argv[])
             IngresarDatosZonas(zonas, &count);
             break;
         case 2:
-            MonitorearLimites(count);
+            EditarZona(zonas, count);
             break;
         case 3:
-            CalcularPrediccion(count);
+            MonitorearLimites(count);
             break;
         case 4:
-            CalcularPromediosHist(count);
+            CalcularPrediccion(count);
             break;
         case 5:
+            CalcularPromediosHist(count);
+            break;
+        case 6:
             if (VerificarFichero("zonas.txt") == 1 && VerificarFichero("historicos.txt") == 1)
             {
                 GenerarReporte(count);
@@ -104,7 +108,7 @@ int main(int argc, char *argv[])
                 printf("\nArchivos necesarios insuficientes, revise la existencia de: zonas.txt e historicos.txt ");
             }
             break;
-        case 6:
+        case 7:
             printf("\nMuchas gracias por usar nuestro programa. Saliendo...\n");
             break;
         default:
@@ -112,7 +116,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-    } while (opc != 6);
+    } while (opc != 7);
 
     return 0;
 }

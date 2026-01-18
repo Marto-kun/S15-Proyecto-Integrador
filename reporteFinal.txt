@@ -1,12 +1,12 @@
-ZONA: CentroHistorico     
+ZONA: Carcelen            
 --------------------------------------------------------------
 ANÁLISIS HISTÓRICO:
   > Promedio Mensual (PM2.5): 12.57 ug/m3
   > Estado del Mes: DENTRO DEL LÍMITE
 
 PREDICCIONES PRÓXIMAS 24 HORAS:
-  > CO2:   249.82 | SO2:     8.48
-  > NO2:    25.12 | PM2.5:    8.20
+  > CO2:   299.60 | SO2:     9.19
+  > NO2:    22.90 | PM2.5:    5.07
 
 CONCLUSIÓN:
   ESTADO: [CALIDAD ÓPTIMA]
@@ -20,8 +20,8 @@ ANÁLISIS HISTÓRICO:
   > Estado del Mes: DENTRO DEL LÍMITE
 
 PREDICCIONES PRÓXIMAS 24 HORAS:
-  > CO2:   147.99 | SO2:     5.56
-  > NO2:    11.67 | PM2.5:    2.79
+  > CO2:   148.02 | SO2:     6.55
+  > NO2:    12.36 | PM2.5:    0.99
 
 CONCLUSIÓN:
   ESTADO: [CALIDAD ÓPTIMA]
@@ -35,8 +35,8 @@ ANÁLISIS HISTÓRICO:
   > Estado del Mes: DENTRO DEL LÍMITE
 
 PREDICCIONES PRÓXIMAS 24 HORAS:
-  > CO2:   199.45 | SO2:     8.94
-  > NO2:    23.01 | PM2.5:    8.27
+  > CO2:   199.53 | SO2:     9.58
+  > NO2:    23.46 | PM2.5:    7.11
 
 CONCLUSIÓN:
   ESTADO: [CALIDAD ÓPTIMA]
@@ -50,8 +50,8 @@ ANÁLISIS HISTÓRICO:
   > Estado del Mes: CRÍTICO
 
 PREDICCIONES PRÓXIMAS 24 HORAS:
-  > CO2:   312.70 | SO2:    13.25
-  > NO2:    14.86 | PM2.5:    8.74
+  > CO2:   312.74 | SO2:    14.49
+  > NO2:    15.73 | PM2.5:    6.49
 
 CONCLUSIÓN:
   ESTADO: [CALIDAD ÓPTIMA]
@@ -65,8 +65,8 @@ ANÁLISIS HISTÓRICO:
   > Estado del Mes: DENTRO DEL LÍMITE
 
 PREDICCIONES PRÓXIMAS 24 HORAS:
-  > CO2:   363.61 | SO2:     8.59
-  > NO2:    14.64 | PM2.5:    6.43
+  > CO2:   363.63 | SO2:     9.44
+  > NO2:    15.24 | PM2.5:    4.87
 
 CONCLUSIÓN:
   ESTADO: [CALIDAD ÓPTIMA]
